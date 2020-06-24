@@ -23,7 +23,7 @@ const (
 	POST_INDEX = "post"
 	DISTANCE   = "200km"
 
-	ES_URL      = "http://35.188.23.199:9200"
+	ES_URL      = "http://10.128.0.2:9200"
 	BUCKET_NAME = "laiproject-bucket"
 )
 
@@ -53,6 +53,8 @@ type Post struct {
 	Url      string   `json:"url"`
 	Type     string   `json:"type"`
 	Face     float32  `json:"face"`
+	Food     float32  `json:"food"`
+	Exercise float32  `json:"exercise"`
 }
 
 func main() {
@@ -128,12 +130,21 @@ func handlerPost(w http.ResponseWriter, r *http.Request) {
 
 	if p.Type == "image" {
 		uri := fmt.Sprintf("gs://%s/%s", BUCKET_NAME, id)
-		if score, err := annotate(uri); err != nil {
+		if faceScore, err := annotateFace(uri); err != nil {
 			http.Error(w, "Failed to annotate the image", http.StatusInternalServerError)
 			fmt.Printf("Failed to annotate the image %v\n", err)
 			return
 		} else {
-			p.Face = score
+			p.Face = faceScore
+		}
+
+		if foodScore, exerciseScore, err := annotateFoodExcercise(uri); err != nil {
+			http.Error(w, "Failed to annotate labels from the image", http.StatusInternalServerError)
+			fmt.Printf("Failed to annotate labels from the image %v\n", err)
+			return
+		} else {
+			p.Food = float32(foodScore)
+			p.Exercise = float32(exerciseScore)
 		}
 	}
 

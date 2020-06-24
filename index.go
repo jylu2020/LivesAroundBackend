@@ -32,7 +32,9 @@ func main() {
                                         "location": { "type": "geo_point" },
                                         "url": { "type": "keyword", "index": false },
                                         "type": { "type": "keyword", "index": false },
-                                        "face": { "type": "float" }
+                                        "face": { "type": "float" },
+					"food": { "type": "float" },
+					"exercise": { "type": "double" }
                                 }
                         }
                 }`
