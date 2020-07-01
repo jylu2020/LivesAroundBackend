@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"cloud.google.com/go/storage"
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
@@ -31,6 +32,7 @@ var (
 	mediaTypes = map[string]string{
 		".jpeg": "image",
 		".jpg":  "image",
+		".JPG":  "image",
 		".gif":  "image",
 		".png":  "image",
 		".mov":  "video",
@@ -48,6 +50,7 @@ type Location struct {
 
 type Post struct {
 	User     string   `json:"user"`
+	Title    string   `json:"title"`
 	Message  string   `json:"message"`
 	Location Location `json:"location"`
 	Url      string   `json:"url"`
@@ -93,11 +96,12 @@ func handlerPost(w http.ResponseWriter, r *http.Request) {
 	claims := user.(*jwt.Token).Claims
 	username := claims.(jwt.MapClaims)["username"]
 
-	lat, _ := strconv.ParseFloat(r.FormValue("lat"), 64)
-	lon, _ := strconv.ParseFloat(r.FormValue("lon"), 64)
+	lat, _ := strconv.ParseFloat(strings.TrimSpace(r.FormValue("lat")), 64)
+	lon, _ := strconv.ParseFloat(strings.TrimSpace(r.FormValue("lon")), 64)
 
 	p := &Post{
 		User:    username.(string),
+		Title:   r.FormValue("title"),
 		Message: r.FormValue("message"),
 		Location: Location{
 			Lat: lat,

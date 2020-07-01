@@ -28,13 +28,14 @@ func main() {
                         "mappings": {
                                 "properties": {
                                         "user": { "type": "keyword", "index": false },
+					"title": { "type": "keyword", "index": false },
                                         "message": { "type": "keyword", "index": false },
                                         "location": { "type": "geo_point" },
                                         "url": { "type": "keyword", "index": false },
                                         "type": { "type": "keyword", "index": false },
                                         "face": { "type": "float" },
 					"food": { "type": "float" },
-					"exercise": { "type": "double" }
+					"exercise": { "type": "float" }
                                 }
                         }
                 }`
